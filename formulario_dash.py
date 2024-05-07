@@ -1,18 +1,25 @@
 import streamlit as st
 import pandas as pd
 import asyncio
+from datetime import datetime
 
 
-import streamlit as st
-import pandas as pd
-import asyncio
+
+
+
+
 
 # Função para ler os dados de forma assíncrona
 async def ler_dados():
+    
     await asyncio.sleep(3)  # Espera 3 segundos para simular uma operação assíncrona
     pd.set_option('display.max_columns', 500)
+    hoje = datetime.now()
     producao = pd.read_csv('https://docs.google.com/spreadsheets/d/1glWuwTvqPXxnyKMX5LabRYg00koKdRRVaAK8bUGhSR0/export?format=csv')
-    quantidade = producao['NOME'].value_counts()
+    print(producao.shape)
+    producao = producao.dropna()
+    producao_hoje = producao[producao['DATA'].str.contains(f'{hoje.day}')]
+    quantidade = producao_hoje['NOME'].value_counts()
     return quantidade
 
 # Função para mostrar os dados no Streamlit
