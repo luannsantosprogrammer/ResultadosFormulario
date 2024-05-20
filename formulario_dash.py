@@ -8,21 +8,20 @@ from datetime import datetime
 
 
 
-
-# Função para ler os dados de forma assíncrona
 async def ler_dados():
     
     await asyncio.sleep(3)  # Espera 3 segundos para simular uma operação assíncrona
     pd.set_option('display.max_columns', 500)
     hoje = datetime.now()
     producao = pd.read_csv('https://docs.google.com/spreadsheets/d/1glWuwTvqPXxnyKMX5LabRYg00koKdRRVaAK8bUGhSR0/export?format=csv')
-    print(producao.shape)
+    # print(producao.shape)
     producao = producao.dropna()
-    producao_hoje = producao[producao['DATA'].str.contains(f'{hoje.day}')]
-    quantidade = producao_hoje['NOME'].value_counts()
+    producao['DATA'] = pd.to_datetime(producao['DATA'], format='%d/%m/%Y')
+    data_atual = producao[producao['DATA'].dt.day == hoje.day]
+    quantidade = data_atual['NOME'].value_counts()
     return quantidade
 
-# Função para mostrar os dados no Streamlit
+# # Função para mostrar os dados no Streamlit
 def mostrar_dados():
     
     with st.empty():  # Cria uma área vazia na interface
@@ -35,3 +34,6 @@ def mostrar_dados():
 st.title('Dados Assíncronos')
 
 mostrar_dados()  # Chama a função para mostrar os dados
+
+
+# Show only the day of the date column
